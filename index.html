@@ -314,6 +314,19 @@
   @media (prefers-reduced-motion: reduce){
     *{animation:none !important; transition:none !important;}
   }
+
+  /* ---------- Demo interaction states ---------- */
+  .toast{position:fixed;left:50%;bottom:32px;transform:translate(-50%,20px);background:var(--navy);color:var(--warm-white);padding:16px 22px;border:1px solid var(--gold);box-shadow:0 14px 40px rgba(8,16,25,.3);border-radius:4px;z-index:10001;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;max-width:min(520px,90vw);font-size:13px;line-height:1.5;text-align:center}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+  .modal{position:fixed;inset:0;background:rgba(8,16,25,.78);backdrop-filter:blur(8px);z-index:10002;display:none;align-items:center;justify-content:center;padding:20px}
+  .modal.open{display:flex}
+  .modal-card{background:var(--warm-white);max-width:560px;width:100%;padding:38px;border-radius:6px;box-shadow:0 30px 80px rgba(0,0,0,.35);position:relative}
+  .modal-card h3{font-size:30px;margin-bottom:10px}
+  .modal-card p{color:#5a6459;line-height:1.7;font-size:14px;margin-bottom:22px}
+  .modal-close{position:absolute;right:18px;top:14px;border:0;background:none;font-size:22px;color:var(--navy);cursor:pointer}
+  .form-summary{background:var(--beige);padding:16px;margin:18px 0;font-size:13px;line-height:1.7}
+  .newsletter-msg{font-size:12px;color:var(--gold-soft);margin-top:8px;min-height:18px}
+
 </style>
 </head>
 <body>
@@ -361,7 +374,7 @@
     <div class="field"><label>Room Type</label>
       <select><option>Deluxe Lake View</option><option>Premium Suite</option><option>Luxury Cottage</option></select>
     </div>
-    <button type="button">Check Availability</button>
+    <button type="button" id="availabilityBtn">Check Availability</button>
   </div>
 </section>
 
@@ -495,11 +508,11 @@
       <p>Our kitchens move between home-style Maharashtrian cooking and a broader multi-cuisine menu, served lakeside, in the dining hall, or under open sky.</p>
     </div>
     <div class="dining-grid stagger">
-      <a class="d1 reveal" href="#"><img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=900" alt="Fine dining table setting"></a>
-      <a class="reveal" href="#"><img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=700" alt="Traditional thali spread"></a>
-      <a class="reveal" href="#"><img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=700&sat=-20" alt="Multi-cuisine dish"></a>
-      <a class="reveal" href="#"><img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=700&blend=1" alt="Restaurant interior"></a>
-      <a class="reveal" href="#"><img src="https://images.unsplash.com/photo-1544148103-0773bf10d330?q=80&w=700" alt="Outdoor lakeside dining"></a>
+      <a class="d1 reveal" href="#gallery"><img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=900" alt="Fine dining table setting"></a>
+      <a class="reveal" href="#gallery"><img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=700" alt="Traditional thali spread"></a>
+      <a class="reveal" href="#gallery"><img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=700&sat=-20" alt="Multi-cuisine dish"></a>
+      <a class="reveal" href="#gallery"><img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=700&blend=1" alt="Restaurant interior"></a>
+      <a class="reveal" href="#gallery"><img src="https://images.unsplash.com/photo-1544148103-0773bf10d330?q=80&w=700" alt="Outdoor lakeside dining"></a>
     </div>
   </div>
 </section>
@@ -606,7 +619,7 @@
           <li><span>Udgir Railway Station</span><span>18 min</span></li>
           <li><span>Latur City</span><span>1 hr 10 min</span></li>
         </ul>
-        <a href="#" class="btn btn-gold" style="align-self:flex-start;">Get Directions</a>
+        <a href="https://www.google.com/maps/search/?api=1&query=Shivam+Lake-View+Resort+Udgir+Maharashtra" target="_blank" rel="noopener noreferrer" class="btn btn-gold" style="align-self:flex-start;">Get Directions ↗</a>
       </div>
     </div>
   </div>
@@ -620,7 +633,7 @@
         <div class="foot-logo">Shivam <span>Lake-View</span></div>
         <p>A lakeside resort in Udgir built for stays, celebrations and destination weddings.</p>
         <div class="socials">
-          <a href="#">f</a><a href="#">in</a><a href="#">ig</a>
+          <a href="#contact" aria-label="Facebook">f</a><a href="#contact" aria-label="LinkedIn">in</a><a href="#contact" aria-label="Instagram">ig</a>
         </div>
       </div>
       <div>
@@ -636,7 +649,7 @@
       <div>
         <h4>Stay in Touch</h4>
         <p>Offers, wedding season dates, and resort news — occasionally, not often.</p>
-        <div class="newsletter"><input placeholder="Your email"><button>Join →</button></div>
+        <div class="newsletter"><input id="newsletterEmail" type="email" placeholder="Your email" aria-label="Your email"><button id="newsletterBtn" type="button">Join →</button></div><div id="newsletterMsg" class="newsletter-msg" aria-live="polite"></div>
       </div>
     </div>
     <div class="foot-bottom">
@@ -648,9 +661,22 @@
 
 <div class="fab-group">
   <div id="totop" class="fab" title="Back to top">↑</div>
-  <div class="fab book" title="Book Now">🛎</div>
-  <div class="fab wa" title="WhatsApp">✆</div>
+  <div class="fab book" id="fabBook" title="Book Now" role="button" tabindex="0">🛎</div>
+  <div class="fab wa" id="fabWhatsApp" title="WhatsApp" role="button" tabindex="0">✆</div>
 </div>
+
+
+  <div class="modal" id="availabilityModal" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="availabilityTitle">
+      <button class="modal-close" id="modalClose" aria-label="Close">×</button>
+      <div class="eyebrow">Stay Enquiry</div>
+      <h3 id="availabilityTitle">Check your stay details</h3>
+      <p>This showcase uses a client-side enquiry flow. No payment or live room inventory is processed on this demo.</p>
+      <div class="form-summary" id="bookingSummary"></div>
+      <a class="btn btn-gold" id="whatsappBooking" href="#" target="_blank" rel="noopener noreferrer">Continue on WhatsApp ↗</a>
+    </div>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
   // loader
@@ -718,6 +744,66 @@
     });
   });
   lightbox.addEventListener('click', ()=> lightbox.style.display = 'none');
+
+  // Demo booking flow
+  const availabilityBtn = document.getElementById('availabilityBtn');
+  const availabilityModal = document.getElementById('availabilityModal');
+  const modalClose = document.getElementById('modalClose');
+  const bookingSummary = document.getElementById('bookingSummary');
+  const whatsappBooking = document.getElementById('whatsappBooking');
+  const checkIn = document.querySelector('.booking-float input[type="date"]');
+  const checkOut = document.querySelectorAll('.booking-float input[type="date"]')[1];
+  const guestSelect = document.querySelectorAll('.booking-float select')[0];
+  const roomSelect = document.querySelectorAll('.booking-float select')[1];
+  const toast = document.getElementById('toast');
+  const fabBook = document.getElementById('fabBook');
+  const fabWhatsApp = document.getElementById('fabWhatsApp');
+
+  function showToast(message){
+    toast.textContent=message; toast.classList.add('show');
+    clearTimeout(window.__toastTimer);
+    window.__toastTimer=setTimeout(()=>toast.classList.remove('show'),3200);
+  }
+  function openBooking(){ availabilityModal.classList.add('open'); availabilityModal.setAttribute('aria-hidden','false'); }
+  function closeBooking(){ availabilityModal.classList.remove('open'); availabilityModal.setAttribute('aria-hidden','true'); }
+  availabilityBtn?.addEventListener('click',()=>{
+    if(!checkIn.value || !checkOut.value){ showToast('Please select your check-in and check-out dates.'); return; }
+    const inDate=new Date(checkIn.value+'T00:00:00');
+    const outDate=new Date(checkOut.value+'T00:00:00');
+    if(outDate<=inDate){ showToast('Check-out must be after check-in.'); return; }
+    const fmt=d=>d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+    const summary=`<strong>${fmt(inDate)}</strong> → <strong>${fmt(outDate)}</strong><br>${guestSelect.value} · ${roomSelect.value}`;
+    bookingSummary.innerHTML=summary;
+    const text=encodeURIComponent(`Hi, I would like to enquire about a stay at Shivam Lake-View Resort.\nCheck-in: ${checkIn.value}\nCheck-out: ${checkOut.value}\nGuests: ${guestSelect.value}\nRoom: ${roomSelect.value}`);
+    // Replace this placeholder number with the resort's verified WhatsApp number before client handoff.
+    whatsappBooking.href=`https://wa.me/911234567890?text=${text}`;
+    openBooking();
+  });
+  modalClose?.addEventListener('click',closeBooking);
+  availabilityModal?.addEventListener('click',e=>{if(e.target===availabilityModal) closeBooking();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape') closeBooking();});
+  fabBook?.addEventListener('click',()=>document.getElementById('book')?.scrollIntoView({behavior:'smooth'}));
+  fabBook?.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' ') fabBook.click();});
+  fabWhatsApp?.addEventListener('click',()=>window.open('https://wa.me/911234567890?text='+encodeURIComponent('Hi, I would like to enquire about Shivam Lake-View Resort.'),'_blank','noopener,noreferrer'));
+  fabWhatsApp?.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' ') fabWhatsApp.click();});
+
+  // Newsletter demo validation
+  const newsletterEmail=document.getElementById('newsletterEmail');
+  const newsletterBtn=document.getElementById('newsletterBtn');
+  const newsletterMsg=document.getElementById('newsletterMsg');
+  newsletterBtn?.addEventListener('click',()=>{
+    if(!newsletterEmail.value || !newsletterEmail.checkValidity()){newsletterMsg.textContent='Please enter a valid email address.'; return;}
+    newsletterMsg.textContent='Thank you — your interest has been recorded for this demo.';
+    newsletterEmail.value='';
+  });
+
+  // Give date fields sensible minimums
+  const today=new Date();
+  const iso=new Date(today.getTime()-today.getTimezoneOffset()*60000).toISOString().slice(0,10);
+  if(checkIn) checkIn.min=iso;
+  if(checkOut) checkOut.min=iso;
+  checkIn?.addEventListener('change',()=>{ if(checkOut) checkOut.min=checkIn.value || iso; });
+
 </script>
 
 </body>
